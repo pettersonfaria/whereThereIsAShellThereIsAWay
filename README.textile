@@ -1,10 +1,6 @@
 projetos-svn
-<pre>
-NomeDoProjeto
-OutroNome
-</pre>
+<pre>NomeDoProjeto
+OutroNome</pre>
 
 usuarios-svn
-<pre>
-usuario-no-svn = Petterson Faria <contato@pettersonfaria.com.br>
-</pre>
+<pre>usuario-no-svn = Petterson Faria <contato@pettersonfaria.com.br></pre>
