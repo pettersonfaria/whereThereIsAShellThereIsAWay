@@ -28,14 +28,15 @@ if [ ! -z "$1" ]; then
 				MIN=`echo "($LEN-$HR*3600)/60" |bc`
 				SEC=`echo "$LEN%60" |bc |cut -d'.' -f1`
 				
-				if [ "$SEC" -lt "10" ]; then
-					SEC="0${SEC}"
-				fi
+				if [ "${HR:=0}" -lt "10" ]; then HR="0${HR}"; fi
+				if [ "${MIN:=0}" -lt "10" ]; then MIN="0${MIN}"; fi
+				if [ "${SEC:=0}" -lt "10" ]; then SEC="0${SEC}"; fi
+
 				time="${HR}:${MIN}:${SEC}"
 
 				echo "<tr><td> $size </td><td> $time </td><td> `basename \"${video}\"` </td></tr>" >> $html
 			else
-				echo "<tr><th colspan=\"3\"> `basename \"${video}\"` </th></tr>" >> $html
+				echo "<tr><th colspan=\"2\"> `du -sh \"$video\"|cut -f1` </th><th>`basename \"${video}\"` </th></tr>" >> $html
 			fi
 		done < $tmp
 
