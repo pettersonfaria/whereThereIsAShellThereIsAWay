@@ -1,4 +1,11 @@
 #!/bin/bash
+
+if [ ! -z `which mplayer` ]; then
+	echo '[!] este script requer o "mplayer" instalado.'
+	echo '[!] Use apt-get install mplayer'
+	exit 0
+fi
+
 workdir=`dirname $(readlink -f $0)`
 tmp="${workdir}/tmp"
 html="${workdir}/result.html"
