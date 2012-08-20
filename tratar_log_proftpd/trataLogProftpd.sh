@@ -3,27 +3,29 @@ log="/var/log/proftpd/xferlog"
 tmp="/tmp/xferlog.tmp"
 
 if [ -z $1 ]; then
-  exit 0
+    echo "falta de parametros"
+    exit 0
 else
+  filtro="$2"
   tac $log |grep -i $1 > $tmp
 fi
 
 fmes(){
     case $1 in
     Jan) echo "01";; Feb) echo "02";; Mar) echo "03";; Apr) echo "04";;
-    May) echo "05";; Jun) echo "06";; Jul) echo "07";; Aug) echo "08";;
-    Sep) echo "09";; Oct) echo "10";; Nov) echo "11";; Dec) echo "12";;
-    esac
+May) echo "05";; Jun) echo "06";; Jul) echo "07";; Aug) echo "08";;
+Sep) echo "09";; Oct) echo "10";; Nov) echo "11";; Dec) echo "12";;
+esac
 }
 facao(){
     case $1 in
         o) echo "baixou";; i) echo "enviou";; d) echo "deletou";;
-    esac
+esac
 }
 ftransf(){
     case $1 in
         i) echo "incompleta";; c) echo "concluido";;
-    esac
+esac
 }
 farq(){
     prepath="/home/ppu/ftp"
@@ -36,6 +38,18 @@ if [ `wc -l $tmp|cut -d' ' -f1` -gt 0 ]; then
     linhac="1"
     while read linha; do
         set -- $linha
+        if [ ${filtro} == "last" ]; then
+            if [ ${linhac} -gt 10 ]; then
+                break
+            fi
+        elif [ ${filtro} != "n" ]; then
+                case ${12} in
+                *) if [ ${12} != $filtro ]; then
+                    continue
+                    fi ;;
+                esac
+        fi
+
         if [ $((linhac % 2)) == 0 ]; then
             echo "<tr id=a>"
         else
