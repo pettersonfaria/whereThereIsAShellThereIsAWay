@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! -z `which mplayer` ]; then
+if [ -z `which mplayer` ]; then
 	echo '[!] este script requer o "mplayer" instalado.'
 	echo '[!] Use apt-get install mplayer'
 	exit 0
@@ -28,13 +28,13 @@ if [ ! -z "$1" ]; then
 			videos="${videos}${video}"
 			if [ -f "$video" ]; then
 				let arquivos++
-				
+
 				size=`du -sh "$video" |cut -f1`
 				LEN=`mplayer -vo /dev/null -ao /dev/null -identify "$video" 2> /dev/null |grep ^ID_LENGTH| sed -e 's/ID_LENGTH=//g'`
 				HR=`echo "$LEN/3600" |bc`
 				MIN=`echo "($LEN-$HR*3600)/60" |bc`
 				SEC=`echo "$LEN%60" |bc |cut -d'.' -f1`
-				
+
 				if [ "${HR:=0}" -lt "10" ]; then HR="0${HR}"; fi
 				if [ "${MIN:=0}" -lt "10" ]; then MIN="0${MIN}"; fi
 				if [ "${SEC:=0}" -lt "10" ]; then SEC="0${SEC}"; fi
@@ -53,7 +53,7 @@ if [ ! -z "$1" ]; then
 		</body></html>
 		eof
 	fi
-	
+
 else
 	echo \# use $0 "<pasta>"
 fi
