@@ -1,0 +1,13 @@
+#!/bin/bash
+_inicial="`pwd`"
+# full remove to test
+aptitude remove openvpn -y >/dev/null 2>&1
+sleep 1
+rm -rf /etc/openvpn/ 2>&1
+if [ -e $_inicial/servidor.tar.gz ]; then
+	rm $_inicial/servidor.tar.gz
+fi
+if [ -e $_inicial/cliente1.tar.gz ]; then
+	rm $_inicial/cliente*.tar.gz
+fi
+
