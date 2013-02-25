@@ -1,5 +1,14 @@
 #!/bin/bash
 # pettersonfaria @ 2011-11-04
+
+numerar(){
+  mascara="000"
+  casas=${#mascara}
+  atual=${#1}
+  diff=$((casas-atual))
+  echo ${mascara:0:diff}${1}
+}
+
 if [ -z $1 ]; then
 	echo "Modo de usar: $0 <numero_de_clientes>"
 else
@@ -13,8 +22,7 @@ else
 		echo \# verificando se existe o diretorio openvpn...
 		if [ ! -d $_dir ]; then
 			echo \# instalando openvpn...
-			# aptitude install openvpn -y >/dev/null 2>&1
-			mkdir $_dir
+			apt-get install openvpn -y >/dev/null 2>&1
 			sleep 1
 			cp -a /usr/share/doc/openvpn/examples/easy-rsa/2.0 $_rsa
 			mkdir -p $_dir/keys
@@ -31,20 +39,59 @@ else
 		source $_vars
 		. $_rsa/clean-all 2>&1
 		clear
-		. $_rsa/build-ca 2>&1
+		
+		echo \# Build CA...
+		. $_rsa/build-ca <<-FIM
+		
+
+
+
+		FOO
+		FOOca
+
+
+		FIM
+
 		clear
-		. $_rsa/build-key-server servidor 2>&1
+		echo \# Build Key Server...
+		. $_rsa/build-key-server servidor <<-END
+		
+
+
+
+		FOO
+		servidor
+
+
+
+
+		y
+		y
+		END
 
 		for i in `seq 1 $1`; do
 			clear
-			. $_rsa/build-key cliente$i 2>&1
+			. $_rsa/build-key cliente$(numerar ${i}) <<-EOF
+			
+
+
+
+			cliente$(numerar ${i})
+			cliente$(numerar ${i})
+
+
+
+
+			y
+			y			
+			EOF
 		done
 
 		clear
-		echo \# criando diffie hellman \(DH\)
+		echo \# Diffie Hellman \(DH\)...
 		. /$_rsa/build-dh 2>&1
 
-		echo \# gerando chave estatica
+		echo \# Static Key...
 		openvpn --genkey --secret $_keys/static.key
 		sleep 1
 
@@ -86,8 +133,8 @@ else
 	tls-client
 	proto udp
 	port 22222
-	cert "c:\\openvpn\\config\\keys\\cliente$i.crt"
-	key "c:\\openvpn\\config\\keys\\cliente$i.key"
+	cert "c:\\openvpn\\config\\keys\\cliente$(numerar ${i}).crt"
+	key "c:\\openvpn\\config\\keys\\cliente$(numerar ${i}).key"
 	dh "c:\\openvpn\\config\\keys\\dh2048.pem"
 	ca "c:\\openvpn\\config\\keys\\ca.crt"
 	tls-auth "c:\\openvpn\\config\\keys\\static.key"
@@ -98,10 +145,10 @@ else
 	EOF
 	# fim do client.conf
 	
-	cp -a $_keys/static.key $_keys/ca.crt $_keys/dh2048.pem $_keys/cliente$i.crt $_keys/cliente$i.key $_keys/keys/
+	cp -a $_keys/static.key $_keys/ca.crt $_keys/dh2048.pem $_keys/cliente$(numerar ${i}).crt $_keys/cliente$(numerar ${i}).key $_keys/keys/
 	cd $_keys	
-	tar -cvzf cliente$i.tar.gz client.ovpn keys 2>&1
-	mv cliente$i.tar.gz $_inicial
+	tar -cvzf cliente$(numerar ${i}).tar.gz client.ovpn keys 2>&1
+	mv cliente$(numerar ${i}).tar.gz $_inicial
 	cd -
 	rm -rf $_keys/keys/ 
 done
@@ -111,4 +158,6 @@ chmod +x /etc/init.d/openvpn
 ls -l $_inicial/*.tar.gz
 else 
 	echo "use sudo ou root user!"
+fi
+
 fi
