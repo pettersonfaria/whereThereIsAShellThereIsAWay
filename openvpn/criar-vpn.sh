@@ -2,11 +2,11 @@
 # pettersonfaria @ 2011-11-04
 
 numerar(){
-  mascara="000"
-  casas=${#mascara}
-  atual=${#1}
-  diff=$((casas-atual))
-  echo ${mascara:0:diff}${1}
+	mascara="000"
+	casas=${#mascara}
+	atual=${#1}
+	diff=$((casas-atual))
+	echo ${mascara:0:diff}${1}
 }
 
 if [ -z $1 ]; then
@@ -38,56 +38,52 @@ else
 		sleep 1
 		source $_vars
 		. $_rsa/clean-all 2>&1
-		clear
 		
-		echo \# Build CA...
-		. $_rsa/build-ca <<-FIM
+		echo ;echo \# Build CA...;echo
+		. $_rsa/build-ca 
+		# <<-EOF
+		# BR
+		# RJ
+		# ITAPERUNA
+		# VPN
+		# VPN
+		# servidor
+		# .
+		# vpn@pettersonfaria.com.br
+		# EOF
 		
+		echo;echo \# Build Key Server...;echo
+		. $_rsa/build-key-server servidor 
+		# <<-EOF
+		# BR
+		# RJ
+		# ITAPERUNA
+		# VPN
+		# VPN
+		# servidor
+		# .
+		# vpn@pettersonfaria.com.br
+		# EOF
 
-
-
-		FOO
-		FOOca
-
-
-		FIM
-
-		clear
-		echo \# Build Key Server...
-		. $_rsa/build-key-server servidor <<-END
-		
-
-
-
-		FOO
-		servidor
-
-
-
-
-		y
-		y
-		END
-
+		echo; echo '# Build key Cliente';echo
 		for i in `seq 1 $1`; do
-			clear
-			. $_rsa/build-key cliente$(numerar ${i}) <<-EOF
-			
+			. $_rsa/build-key cliente$(numerar ${i}) 
+			# <<-EOF
+			# BR
+			# RJ
+			# ITAPERUNA
+			# VPN
+			# VPN
+			# cliente$(numerar ${i})
+			# .
+			# vpn@pettersonfaria.com.br
 
 
-
-			cliente$(numerar ${i})
-			cliente$(numerar ${i})
-
-
-
-
-			y
-			y			
-			EOF
+			# y
+			# y
+			# EOF
 		done
 
-		clear
 		echo \# Diffie Hellman \(DH\)...
 		. /$_rsa/build-dh 2>&1
 
@@ -106,7 +102,7 @@ else
 		fi
 
 		echo \# copiando certificados e chaves para $_dir/keys
-		cp -a $_keys/dh2048.pem $_keys/ca.crt $_keys/servidor.crt $_keys/servidor.key $_keys/static.key $_dir/keys
+		cp -a $_keys/dh1024.pem $_keys/ca.crt $_keys/servidor.crt $_keys/servidor.key $_keys/static.key $_dir/keys
 
 		echo \# copiando openvpn.conf
 		cp -a $_inicial/openvpn.conf $_dir
@@ -135,7 +131,7 @@ else
 	port 22222
 	cert "c:\\openvpn\\config\\keys\\cliente$(numerar ${i}).crt"
 	key "c:\\openvpn\\config\\keys\\cliente$(numerar ${i}).key"
-	dh "c:\\openvpn\\config\\keys\\dh2048.pem"
+	dh "c:\\openvpn\\config\\keys\\dh1024.pem"
 	ca "c:\\openvpn\\config\\keys\\ca.crt"
 	tls-auth "c:\\openvpn\\config\\keys\\static.key"
 	persist-key
@@ -145,7 +141,7 @@ else
 	EOF
 	# fim do client.conf
 	
-	cp -a $_keys/static.key $_keys/ca.crt $_keys/dh2048.pem $_keys/cliente$(numerar ${i}).crt $_keys/cliente$(numerar ${i}).key $_keys/keys/
+	cp -a $_keys/static.key $_keys/ca.crt $_keys/dh1024.pem $_keys/cliente$(numerar ${i}).crt $_keys/cliente$(numerar ${i}).key $_keys/keys/
 	cd $_keys	
 	tar -cvzf cliente$(numerar ${i}).tar.gz client.ovpn keys 2>&1
 	mv cliente$(numerar ${i}).tar.gz $_inicial
